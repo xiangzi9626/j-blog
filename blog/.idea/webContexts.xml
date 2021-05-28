@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebContextManager">
+    <option name="state">
+      <map>
+        <entry key="file://$PROJECT_DIR$/web/layuimini-2/index.jsp" value="file://$PROJECT_DIR$/web/layuimini-2" />
+        <entry key="file://$PROJECT_DIR$/web/layuimini-2/page/add_article.html" value="file://$PROJECT_DIR$/web/layuimini-2/page" />
+        <entry key="file://$PROJECT_DIR$/web/layuimini-2/page/class_list.html" value="file://$PROJECT_DIR$/web/layuimini-2/page" />
+        <entry key="file://$PROJECT_DIR$/web/layuimini-2/page/dtree.html" value="file://$PROJECT_DIR$/web/layuimini-2/page" />
+        <entry key="file://$PROJECT_DIR$/web/layuimini-2/page/edit_article.html" value="file://$PROJECT_DIR$/web/layuimini-2/page" />
+        <entry key="file://$PROJECT_DIR$/web/layuimini-2/page/edit_menu.html" value="file://$PROJECT_DIR$/web/layuimini-2/page" />
+      </map>
+    </option>
+  </component>
+</project>

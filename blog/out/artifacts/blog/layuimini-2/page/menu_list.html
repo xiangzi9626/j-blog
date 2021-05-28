@@ -1,0 +1,162 @@
+<style>
+    .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {height:34px;line-height:34px;padding:0 8px;}
+</style>
+<script>
+    function refresh(){
+        location.reload();
+    }
+</script>
+<script>
+    function add(){
+         layer.open({
+            title: '添加菜单',
+            type: 2,
+            shade: 0.2,
+            maxmin:true,
+            shadeClose: true,
+            area: ['90%', '90%'],
+            content:"/layuimini-2/page/add_menu.html",
+        });
+    }
+</script>
+<body>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <div>
+            <div class="layui-table-tool">
+                <button onclick="refresh()" class="layui-btn layui-btn-sm layui-btn-success"><i class="fa fa-refresh"></i> </button>
+                <button onclick="add()" class="layui-btn layui-btn-normal layui-btn-sm " data-open="system.menu/add" data-title="添加" data-full="true"><i class="fa fa-plus"></i> 添加</button>
+                <button class="layui-btn" id="btn-expand" style="margin-left:10px">全部展开</button>
+                <button class="layui-btn layui-btn-normal" id="btn-fold" style="margin-left:10px">全部折叠</button>
+            </div>
+            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        </div>
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(["form",'table', 'treetable'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var form=layui.form;
+        form.on('switch(switchTest)', function (data) {
+            var b=0;
+            if(data.elem.checked){　　　　　　//判断当前多选框是选中还是取消选中
+                b=1;
+            }
+            var str={id:data.value,status:b,action:"status"};
+            str=JSON.stringify(str);
+            var domain = document.domain;
+            domain="http://"+domain+"/admin/menu";
+            $.ajax({
+                type:'POST',
+                url:domain,
+                data:str,
+                success:function (res){
+                   if (res==="ok"){
+                        layer.msg("操作成功");
+                    }else{
+                        if(data.elem.checked){　　　　　　//判断当前多选框是选中还是取消选中
+                            data.elem.checked=false;
+                        }else{
+                            data.elem.checked=true;
+                        }
+                        layer.msg(res);
+                    }
+                },
+                error:function (msg){
+                      console.log(msg);
+                }
+            })
+        });
+        // 渲染表格
+        layer.load(2);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: 0,
+            treeIdName: 'id',
+            treePidName: 'pid',
+            elem: '#munu-table',
+            url: '/admin/menu?action=list',
+            page: false,
+            cols: [[
+                {field: 'id',width:100, align: 'center',title: 'ID'},
+                {field: 'title',title: '菜单名称'},
+                {field: 'icon',title: '图标',templet:function(d){
+                        return "<i class='"+d.icon+"'></i>";
+                    }},
+                {field: 'href', title: '菜单url'},
+                {field: 'sort',align:'center',title: '排序号'},
+                {field:'status',align:'center',title:'状态',templet:function (d){
+                        if (d.status==0){
+                            return '<input value="'+d.id+'" type="checkbox" name="status" lay-skin="switch" lay-text="开|关" lay-filter="switchTest">';
+                        }else{
+                            return '<input checked value="'+d.id+'" type="checkbox" name="status" lay-skin="switch" lay-text="开|关" lay-filter="switchTest">';
+                        }
+                    }},
+                {field: 'create_at',title: '创建时间'},
+                {templet: '#auth-state', align: 'center', title: '操作'}
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+        });
+
+        //监听工具条
+        table.on('tool(munu-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.alert("确定删除 '"+data.title+"' 吗?",{
+                    icon:2,
+                    btn:["确定","取消"],
+                    btn1:function (){
+                        var str={id:data.id,title:data.title,action:"delete"};
+                        str=JSON.stringify(str);
+                        var domain = document.domain;
+                        domain="http://"+domain+"/admin/menu";
+                        $.ajax({
+                            type:'POST',
+                            url:domain,
+                            data:str,
+                            success:function (res){
+                                if (res==="ok"){
+                                    layer.msg("删除成功");
+                                    location.reload();
+                                }else{
+                                    layer.msg(res);
+                                }
+                            }
+                        })
+                    }
+                });
+            } else if (layEvent === 'edit') {
+                layer.open({
+                    title: '编辑菜单',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['90%', '90%'],
+                    content: '/layuimini-2/page/edit_menu.html?id='+data.id,
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

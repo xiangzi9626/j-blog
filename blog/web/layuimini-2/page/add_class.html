@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../layuimini-2/css/public.css" media="all">
+    <link rel="stylesheet" href="../../layuimini-2/lib/layui-v2.5.5/css/layui.css">
+    <link rel="stylesheet" href="../../layuimini-2/js/lay-module/dtree/dtree.css">
+    <link rel="stylesheet" href="../../layuimini-2/js/lay-module/dtree/font/dtreefont.css">
+    <script src="../../layuimini-2/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+    <script src="../../layuimini-2/js/lay-config.js?v=2.0.0" charset="utf-8"></script>
+    <script src="../../common/js/getQueryVariable.js"></script>
+    <style>
+        #dtreeDiv{
+            width: 100%;
+            background: #ffffff;
+            position: absolute;
+            z-index: 1;
+            display:none;
+        }
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+    <script>
+        function dtreeShow(){
+            var dtreeDiv=document.getElementById("dtreeDiv");
+            var display=dtreeDiv.style.display;
+            if (display==="none"){
+                dtreeDiv.style.display="block";
+            }else if(display==="block"){
+                dtreeDiv.style.display="none";
+            }else{
+                dtreeDiv.style.display="block";
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">上级分类</label>
+        <div class="layui-input-block">
+             <input type="hidden" id="pid" name="pid" value="0">
+            <input type="hidden" id="action" name="action" value="edit">
+            <span onclick="dtreeShow()">
+                        <input disabled="disabled" id="layui-unselect" type="text" placeholder="顶级分类"  class="layui-input layui-unselect">
+                    </span>
+            <div id="dtreeDiv">
+                <ui  id="selTree1" ></ui>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">分类名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" lay-verify="required" lay-reqtext="分类名称不能为空" placeholder="请输入菜单名称" value="" class="layui-input">
+            <tip>填写分类名称。</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var str=JSON.stringify(data.field);
+            str=eval("("+str+")");
+            str={"action":"add","pid":str.pid,"title":str.title}
+            str=JSON.stringify(str);
+           $.ajax({
+              type:'post',
+              url:"http://"+document.domain+"/admin/article_class",
+              data:str,
+              success:function (res){
+                 if (res==="ok"){
+                     layer.msg("添加成功");
+                     window.parent.location.reload();
+                 }else{
+                     layer.msg(res);
+                 }
+              }
+          })
+            return false;
+        });
+    });
+</script>
+<script type="text/javascript">
+    layui.use(["jquery",'element','layer', 'table', 'code' ,'util', 'dtree', 'form'], function(){
+        var element = layui.element,
+            layer = layui.layer,
+            table = layui.table,
+            util = layui.util,
+            dtree = layui.dtree,
+            form = layui.form,
+            $=layui.jquery;
+        //var data = dtreeData;
+        var DTree = dtree.render({
+            elem: "#selTree1",
+            method:"get",
+            width: "100%", // 指定树的宽度
+            // data: dtreeData,
+            open:false,
+            icon: "-1",  // 隐藏二级图标
+            skin: "laySimple",  // laySimple主题风格
+            url:"http://"+document.domain+"/admin/article_class?action=dtree"
+        });
+        dtree.on("node(selTree1)",function(obj){
+            var str=JSON.stringify(obj.param);
+            str=eval("("+str+")");
+            $("#layui-unselect").val(str.context);
+            $("#pid").val(str.nodeId);
+            $("#dtreeDiv").css("display","none");
+        })
+    });
+</script>
+</body>
+</html>
