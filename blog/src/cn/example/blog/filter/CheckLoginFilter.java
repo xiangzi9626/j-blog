@@ -21,7 +21,7 @@ public class CheckLoginFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
         JSONObject user = (JSONObject) req.getSession().getAttribute("user");
         if (user == null) {
-            resp.sendRedirect("/admin_login");
+             resp.sendRedirect("/admin_login");
             return;
         } else if (!user.get("level").equals("1") && !user.get("level").equals("2")) {
             resp.sendRedirect("/admin_login");

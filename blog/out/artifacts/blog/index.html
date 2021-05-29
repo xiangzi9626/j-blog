@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="layuimini-2/lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="common/js/jquery-3.2.1.js"></script>
     <script>
         $(function (){
-            alert("aabb");
+            $("#btn1").click(function (){
+                $.ajax({
+                    type:"post",
+                    url:"http://"+document.domain+"/admin/article_class?action=list",
+                    success:function (res){
+                        alert(res);
+                    }
+                })
+            });
         })
     </script>
 </head>
 <body>
 Hello world!世界你好
+<input type="button" id="btn1" value="点击">
 </body>
 </html>
